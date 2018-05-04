@@ -10,6 +10,7 @@
  */
 
 #include "qbayesnode.h"
+#include <QGraphicsScene>
 #include <QtGui>
 
 const qreal QBayesNode::RADIUS = 25;

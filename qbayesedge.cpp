@@ -10,7 +10,7 @@
  */
 
 #include "qbayesedge.h"
-
+#include <QGraphicsSceneMouseEvent>
 #include <QtGui>
 #include <QDebug>
 

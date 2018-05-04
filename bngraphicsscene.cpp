@@ -12,7 +12,7 @@
 #include "bngraphicsscene.h"
 
 #include <QtGui>
-
+#include <QGraphicsSceneMouseEvent>
 #include "utility.h"
 #include "qbayesnode.h"
 #include "qbayesedge.h"
@@ -213,7 +213,8 @@ void BnGraphicsScene::onEdgeDeleted()
 void BnGraphicsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     auto mousePos = event->scenePos();
-    auto ellipse = this->itemAt(mousePos);
+//    auto ellipse = this->itemAt(mousePos);
+    auto ellipse = this->itemAt(mousePos, QTransform());
 
     if (!ellipse) {
         addNode("", mousePos);
@@ -227,7 +228,8 @@ void BnGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->modifiers() & Qt::ShiftModifier) {
         auto mousePos = event->scenePos();
-        auto childNode = dynamic_cast<QBayesNode*>(this->itemAt(mousePos));
+//        auto childNode = dynamic_cast<QBayesNode*>(this->itemAt(mousePos));
+        auto childNode = dynamic_cast<QBayesNode*>(this->itemAt(mousePos, QTransform()));
         auto parentNode = getSelectedNode();
         if (childNode && parentNode) {
             /// check edge alredy exist

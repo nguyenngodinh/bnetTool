@@ -29,12 +29,14 @@ ConvertBayesData::ConvertBayesData(QWidget *parent) :
     mModelValue = new TsvModel(mHeaders);
     ui->tblValue->setModel(mModelValue);
     ui->tblValue->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui->tblValue->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+//    ui->tblValue->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+    ui->tblValue->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tblValue->horizontalHeader()->setDefaultSectionSize(100);
     mModelLabel = new TsvModel(mHeaders);
     ui->tblLabel->setModel(mModelLabel);
     ui->tblLabel->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui->tblLabel->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+//    ui->tblLabel->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+    ui->tblLabel->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     mModelThreshold = new ThresholdModel(mHeaders.size());
     ui->tblThreshold->setModel(mModelThreshold);
     ui->tblThreshold->setSelectionMode(QAbstractItemView::SingleSelection);
