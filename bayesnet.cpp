@@ -1291,6 +1291,7 @@ void BayesNet::addNode(uint nodeSize)
             newCpt[i] = 0.0;
         }
         mMapCpt.push_back(newCpt);
+        mNodeId.push_back(mNumNodes);
         ++mNumNodes;
         mIsModified = true;
     }
@@ -1326,6 +1327,9 @@ void BayesNet::removeNode(uint nodeIndex)
     mMapCpt.erase(mMapCpt.begin() + nodeIndex);
 
     --mNumNodes;
+    mNodeId.clear();
+    for(uint i=0; i<mNumNodes; i++)
+        mNodeId.push_back(i);
     mIsModified = true;
 }
 

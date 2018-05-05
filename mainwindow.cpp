@@ -66,7 +66,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(mModelCpt, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(onCptDataChanged(QModelIndex,QModelIndex)));
     ui->tblCpt->setModel(mModelCpt);
     ui->tblCpt->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui->tblCpt->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+//    ui->tblCpt->horizontalHeader()->setSResizeMode(QHeaderView::Stretch);
+    ui->tblCpt->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ///
 
     /// init PPT graph
