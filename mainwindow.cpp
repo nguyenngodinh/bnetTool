@@ -473,7 +473,8 @@ void MainWindow::on_action_About_triggered()
 {
     QMessageBox msgBox(QMessageBox::Information, "About", "\nBayesian Network Tool \n"
                        "Support GUI for creating and calculating on Bayesian Network.\n"
-                       "Copyright 2015\n @TrungVV.\n Version 1.0",
+                       "Original 2015 @TrungVV Version 1.0\n"
+                       "Updated 2016 @NguyenND5 Version 2.0",
                        QMessageBox::Ok, this, Qt::Dialog | Qt::FramelessWindowHint);
     msgBox.exec();
 }
