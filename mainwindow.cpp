@@ -333,6 +333,7 @@ void MainWindow::on_btnRecal_clicked()
 
         /// get PPT based on current evidence
         auto numNodes = mBayesNet->getNumNodes();
+        /*
         ///
 //        vector<uint> evidences(numNodes, NONE_NODE_INDEX);
 //        for (uint i = 0; i < numNodes; ++i)
@@ -347,7 +348,7 @@ void MainWindow::on_btnRecal_clicked()
 //            mListPpts.push_back(ppt);
 //        }
         ///
-
+*/
 
 
         ///@
@@ -473,7 +474,8 @@ void MainWindow::on_action_About_triggered()
 {
     QMessageBox msgBox(QMessageBox::Information, "About", "\nBayesian Network Tool \n"
                        "Support GUI for creating and calculating on Bayesian Network.\n"
-                       "Copyright 2015\n @TrungVV.\n Version 1.0",
+                       "Version 1.0 Copyright 2015 @TrungVV.\n"
+                       "Version 2.0 Copyright 2016 @NguyenND",
                        QMessageBox::Ok, this, Qt::Dialog | Qt::FramelessWindowHint);
     msgBox.exec();
 }

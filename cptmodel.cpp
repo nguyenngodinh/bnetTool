@@ -15,7 +15,7 @@
 CptModel::CptModel(QObject* parent)
     : QAbstractTableModel(parent)
 {
-    values = nullptr;
+    mValues = nullptr;
     initValues(1, 2, 0);
 }
 
@@ -26,10 +26,10 @@ QVariant CptModel::data(const QModelIndex &index, int role) const
     if (index.isValid())
     {
         if (role == Qt::DisplayRole) {
-            return values[row][col];
+            return mValues[row][col];
         } else if (role == Qt::TextAlignmentRole) {
             return Qt::AlignCenter;
-        } else if (role == Qt::BackgroundRole && col < nparents) {
+        } else if (role == Qt::BackgroundRole && col < mNodeparents) {
             return QColor(180,255,255);
         }
     }
@@ -43,13 +43,13 @@ bool CptModel::setData(const QModelIndex &index, const QVariant &value, int role
             return false;
         }
         double newValue = value.toDouble();
-        if (newValue == values[index.row()][index.column()] || index.column() < nparents) {
+        if (newValue == mValues[index.row()][index.column()] || index.column() < mNodeparents) {
             return false;
         }
-        values[index.row()][index.column()] = newValue;
-        if (ncolumns-nparents == 2)
+        mValues[index.row()][index.column()] = newValue;
+        if (mNColumns-mNodeparents == 2)
         {
-            values[index.row()][ncolumns-1-(index.column()-nparents)] = 1 - newValue;
+            mValues[index.row()][mNColumns-1-(index.column()-mNodeparents)] = 1 - newValue;
         }
         emit dataChanged(index, index);
         return true;
@@ -85,14 +85,14 @@ QVariant CptModel::headerData(int section, Qt::Orientation orientation, int role
     if (role == Qt::DisplayRole) {
         if (orientation == Qt::Horizontal)
         {
-            if(section >=0 && section < headers.count())
-                return headers[section];
+            if(section >=0 && section < mHeaders.count())
+                return mHeaders[section];
         }
     } else if (role == Qt::TextAlignmentRole) {
         return Qt::AlignCenter;
     } else if (role == Qt::BackgroundRole) {
         if (orientation == Qt::Horizontal) {
-            if (section < nparents) {
+            if (section < mNodeparents) {
                 return QColor(120,210,210);
             } else {
                 return QColor(150,150,250);
@@ -104,12 +104,12 @@ QVariant CptModel::headerData(int section, Qt::Orientation orientation, int role
 
 int CptModel::rowCount(const QModelIndex &parent) const
 {
-    return nrows;
+    return mNRows;
 }
 
 int CptModel::columnCount(const QModelIndex &parent) const
 {
-    return ncolumns;
+    return mNColumns;
 }
 
 bool CptModel::insertRows(int row, int count, const QModelIndex &parent)
@@ -140,15 +140,15 @@ void CptModel::initValues(int nrows, int ncolumns, int nparents)
     clear();
     ///
 
-    this->nrows = nrows;
-    this->ncolumns = ncolumns;
-    this->nparents = nparents;
-    values = new double*[nrows];
+    this->mNRows = nrows;
+    this->mNColumns = ncolumns;
+    this->mNodeparents = nparents;
+    mValues = new double*[nrows];
     for (int i = 0; i < nrows; ++i) {
-        values[i] = new double[ncolumns];
+        mValues[i] = new double[ncolumns];
         for (int j = 0; j < ncolumns; ++j) {
-            values[i][j] = 0;
-//            values[i][j] = 1.0 / ncolumns;
+            mValues[i][j] = 0;
+//            mValues[i][j] = 1.0 / mNColumns;
         }
 //        values[i][0] = 1;
     }    
@@ -157,32 +157,32 @@ void CptModel::initValues(int nrows, int ncolumns, int nparents)
 
 void CptModel::setValue(int row, int column, double value)
 {
-    values[row][column] = value;
+    mValues[row][column] = value;
 }
 
 double CptModel::getValue(int row, int column)
 {
-    if (0 <= row && row < nrows && 0 <= column && column < ncolumns)
-        return values[row][column];
+    if (0 <= row && row < mNRows && 0 <= column && column < mNColumns)
+        return mValues[row][column];
     else
         return 0;
 }
 
 void CptModel::setHeader(int column, QString value)
 {
-    headers.insert(column, value);
+    mHeaders.insert(column, value);
 }
 
 void CptModel::clear()
 {
-    if (values) {
-        for (int i = 0; i < this->nrows; ++i) {
-            delete values[i];
-            values[i] = nullptr;
+    if (mValues) {
+        for (int i = 0; i < this->mNRows; ++i) {
+            delete mValues[i];
+            mValues[i] = nullptr;
         }
-        delete values;
-        values = nullptr;
+        delete mValues;
+        mValues = nullptr;
     }
-    headers.clear();
-    nrows = ncolumns = nparents = 0;
+    mHeaders.clear();
+    mNRows = mNColumns = mNodeparents = 0;
 }

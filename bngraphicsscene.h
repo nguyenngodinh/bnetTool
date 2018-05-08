@@ -56,9 +56,9 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
 private:
-    uint numNodes;
-    QMap<QBayesNode*, QList<QBayesEdge*>> mapBayes;   /// map each node to all edge related to it
-    QList<QBayesEdge*> listEdges;
+    uint mNumNodes;
+    QMap<QBayesNode*, QList<QBayesEdge*>> mMapBayes;   /// map each node to all edge related to it
+    QList<QBayesEdge*> mListEdges;
 };
 
 #endif // MYGRAPHICSSCENE_H

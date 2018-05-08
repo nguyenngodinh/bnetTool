@@ -37,7 +37,7 @@ public:
     void setRowCount(int n);
 
 private:
-    int nrows, ncolumns;
+    int mNRows, mNColumns;
     QStringList mThresholds;
 };
 

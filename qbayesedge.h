@@ -23,7 +23,7 @@ class QBayesEdge : public QObject, public QGraphicsItem
     Q_OBJECT
 
 public:
-    QBayesEdge(QBayesNode* parentNode, QBayesNode* childNode, QPointF parentPoint, QPointF childPoint);
+    QBayesEdge(QBayesNode* mParentNode, QBayesNode* mChildNode, QPointF mParentPoint, QPointF mChildPoint);
     ~QBayesEdge();
 
     void setLine();
@@ -50,10 +50,10 @@ protected:
 private:
     const qreal ARROW_WIDTH = 10;
 
-    QBayesNode *parentNode, *childNode;
-    bool isSelected;
-    QPointF parentPoint, childPoint;
-    QPointF start, end, arrow1, arrow2;
+    QBayesNode *mParentNode, *mChildNode;
+    bool mIsSelected;
+    QPointF mParentPoint, mChildPoint;
+    QPointF mStartPoint, mEndPoint, mArrow1, mArrow2;
 
 };
 

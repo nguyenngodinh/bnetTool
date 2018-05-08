@@ -4,4 +4,6 @@ bayesian network gui tool
 ###### - Graphical creating bayesian network.
 ###### - Inference based on probability, statiscal theory.
 ###### - Learning with complete and uncomplete data.
-##### This version have improvement of speed on infering and learning with algorithm of belief propagation by NguyenND (nguyenngodinh@outlook.com)
+##### This version have improvement by NguyenND (nguyenngodinh@outlook.com)
+###### - Increase speed on infering and learning with algorithm of belief propagation.
+###### - Can solve the big size of network and loopy graph.

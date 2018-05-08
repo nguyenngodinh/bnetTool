@@ -13,7 +13,7 @@
 
 ThresholdModel::ThresholdModel(int n, QObject* parent)
 {
-    ncolumns = 2;
+    mNColumns = 2;
     setRowCount(n);
 }
 
@@ -74,12 +74,12 @@ QVariant ThresholdModel::headerData(int section, Qt::Orientation orientation, in
 
 int ThresholdModel::rowCount(const QModelIndex &parent) const
 {
-    return nrows;
+    return mNRows;
 }
 
 int ThresholdModel::columnCount(const QModelIndex &parent) const
 {
-    return ncolumns;
+    return mNColumns;
 }
 
 bool ThresholdModel::insertRows(int row, int count, const QModelIndex &parent)
@@ -130,7 +130,7 @@ vector<vector<double>> ThresholdModel::getThresholds() const
 void ThresholdModel::setRowCount(int n)
 {
     beginResetModel();
-    nrows = n;
+    mNRows = n;
     mThresholds.clear();
     for (int i=0; i<n; ++i)
         mThresholds.append("");
