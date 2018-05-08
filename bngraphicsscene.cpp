@@ -26,9 +26,9 @@ void BnGraphicsScene::loadFromText(QString *text)
     double px, py;
     QString label;
 
-    numNodes = 0;
-    strScene >> numNodes;
-    for (uint i = 0; i < numNodes; ++i) {
+    mNumNodes = 0;
+    strScene >> mNumNodes;
+    for (uint i = 0; i < mNumNodes; ++i) {
         strScene >> nodeIndex;
         strScene >> label;
         strScene >> px;
@@ -44,7 +44,7 @@ void BnGraphicsScene::loadFromText(QString *text)
 //        newNode->setIsSelected(false);
         connect(newNode, SIGNAL(nodeDeleted()), this, SLOT(onNodeDeleted()));
         connect(newNode, SIGNAL(positionChanged(QPointF)), this, SIGNAL(nodePositionChanged()));
-        mapBayes.insert(newNode, QList<QBayesEdge*>());
+        mMapBayes.insert(newNode, QList<QBayesEdge*>());
     }
 
     uint nodeIndex1, nodeIndex2;
@@ -65,28 +65,28 @@ void BnGraphicsScene::loadFromText(QString *text)
         connect(parentNode, SIGNAL(nodeDeleted()), newEdge, SLOT(onNodeDeleted()));
         connect(childNode, SIGNAL(nodeDeleted()), newEdge, SLOT(onNodeDeleted()));
         connect(newEdge, SIGNAL(edgeDeleted()), this, SLOT(onEdgeDeleted()));
-        mapBayes[parentNode].append(newEdge);
-        mapBayes[childNode].append(newEdge);
-        listEdges.push_back(newEdge);
+        mMapBayes[parentNode].append(newEdge);
+        mMapBayes[childNode].append(newEdge);
+        mListEdges.push_back(newEdge);
     }
 }
 
 void BnGraphicsScene::clearNetwork()
 {
-    if (!listEdges.isEmpty()) {
-        qDeleteAll(listEdges);
-        listEdges.clear();
+    if (!mListEdges.isEmpty()) {
+        qDeleteAll(mListEdges);
+        mListEdges.clear();
     }
-    if (!mapBayes.isEmpty()) {
-        foreach (auto list, mapBayes.values()) {
+    if (!mMapBayes.isEmpty()) {
+        foreach (auto list, mMapBayes.values()) {
             list.clear();
         }
-        foreach (auto key, mapBayes.keys()) {
+        foreach (auto key, mMapBayes.keys()) {
             delete key;
         }
-        mapBayes.clear();
+        mMapBayes.clear();
     }
-    numNodes = 0;
+    mNumNodes = 0;
     clear();
     clearFocus();
     clearSelection();
@@ -95,7 +95,7 @@ void BnGraphicsScene::clearNetwork()
 BnGraphicsScene::BnGraphicsScene(QObject *parent)
     : QGraphicsScene(parent)
 {
-    numNodes = 0;
+    mNumNodes = 0;
 }
 
 BnGraphicsScene::~BnGraphicsScene()
@@ -135,7 +135,7 @@ QBayesEdge *BnGraphicsScene::getSelectedEdge()
 
 QBayesNode *BnGraphicsScene::getNodeAt(uint index) const
 {
-    foreach (auto node, mapBayes.keys()) {
+    foreach (auto node, mMapBayes.keys()) {
         if (node->getIndex() == index) {
             return node;
         }
@@ -146,19 +146,19 @@ QBayesNode *BnGraphicsScene::getNodeAt(uint index) const
 QString BnGraphicsScene::toString() const
 {
     QString rs = "";
-    rs += QString::number(numNodes);
+    rs += QString::number(mNumNodes);
     rs += "\t";
     rs += "\n";
-    auto listKeys = mapBayes.keys();
+    auto listKeys = mMapBayes.keys();
     qSort(listKeys.begin(), listKeys.end(), PtrLess<QBayesNode>());
     foreach (QBayesNode* node, listKeys) {
         rs += node->toString();
         rs += "\n";
     }
-    rs += QString::number(listEdges.size());
+    rs += QString::number(mListEdges.size());
     rs += "\t";
     rs += "\n";
-    foreach (QBayesEdge* edge, listEdges) {
+    foreach (QBayesEdge* edge, mListEdges) {
         rs += edge->toString();
         rs += "\n";
     }
@@ -171,26 +171,26 @@ void BnGraphicsScene::onNodeDeleted()
     auto dNode = getSelectedNode();
 
     /// delete related edges
-    foreach (QBayesEdge* edge, mapBayes[dNode]) {
-        mapBayes[edge->getParentNode()].removeOne(edge);
-        mapBayes[edge->getChildNode()].removeOne(edge);
-        listEdges.removeOne(edge);
+    foreach (QBayesEdge* edge, mMapBayes[dNode]) {
+        mMapBayes[edge->getParentNode()].removeOne(edge);
+        mMapBayes[edge->getChildNode()].removeOne(edge);
+        mListEdges.removeOne(edge);
         this->removeItem(edge);
     }
-    mapBayes[dNode].clear();
-    mapBayes.remove(dNode);
+    mMapBayes[dNode].clear();
+    mMapBayes.remove(dNode);
     ///
 
     emit nodeDeleted(dNode->getIndex());
 
     /// decrease node's index
     auto index = dNode->getIndex();
-    foreach (QBayesNode* node, mapBayes.keys()) {
+    foreach (QBayesNode* node, mMapBayes.keys()) {
         if (node->getIndex() > index) {
             node->setIndex(node->getIndex()-1);
         }
     }
-    numNodes--;
+    mNumNodes--;
     ///
 
     this->removeItem(dNode);
@@ -200,9 +200,9 @@ void BnGraphicsScene::onNodeDeleted()
 void BnGraphicsScene::onEdgeDeleted()
 {
     auto dEdge = getSelectedEdge();
-    mapBayes[dEdge->getParentNode()].removeOne(dEdge);
-    mapBayes[dEdge->getChildNode()].removeOne(dEdge);
-    listEdges.removeOne(dEdge);
+    mMapBayes[dEdge->getParentNode()].removeOne(dEdge);
+    mMapBayes[dEdge->getChildNode()].removeOne(dEdge);
+    mListEdges.removeOne(dEdge);
     this->removeItem(dEdge);
     auto paIndex = dEdge->getParentNode()->getIndex();
     auto cIndex = dEdge->getChildNode()->getIndex();
@@ -233,7 +233,7 @@ void BnGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         auto parentNode = getSelectedNode();
         if (childNode && parentNode) {
             /// check edge alredy exist
-            foreach (QBayesEdge* edge, mapBayes[parentNode]) {
+            foreach (QBayesEdge* edge, mMapBayes[parentNode]) {
                 if (edge->getChildNode() == childNode) {
                     return;
                 }
@@ -250,14 +250,14 @@ void BnGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void BnGraphicsScene::addNode(QString label, QPointF pos)
 {
-    QBayesNode *newNode = new QBayesNode(numNodes, label);
+    QBayesNode *newNode = new QBayesNode(mNumNodes, label);
     newNode->setPos(pos);
     this->addItem(newNode);
     newNode->setSelected(true);
     connect(newNode, SIGNAL(nodeDeleted()), this, SLOT(onNodeDeleted()));
     connect(newNode, SIGNAL(positionChanged(QPointF)), this, SIGNAL(nodePositionChanged()));
-    mapBayes.insert(newNode, QList<QBayesEdge*>());
-    ++numNodes;
+    mMapBayes.insert(newNode, QList<QBayesEdge*>());
+    ++mNumNodes;
     emit nodeAdded();
 }
 
@@ -272,9 +272,9 @@ void BnGraphicsScene::addEdge(QBayesNode* parentNode, QBayesNode* childNode)
     connect(parentNode, SIGNAL(nodeDeleted()), newEdge, SLOT(onNodeDeleted()));
     connect(childNode, SIGNAL(nodeDeleted()), newEdge, SLOT(onNodeDeleted()));
     connect(newEdge, SIGNAL(edgeDeleted()), this, SLOT(onEdgeDeleted()));
-    mapBayes[parentNode].append(newEdge);
-    mapBayes[childNode].append(newEdge);
-    listEdges.push_back(newEdge);
+    mMapBayes[parentNode].append(newEdge);
+    mMapBayes[childNode].append(newEdge);
+    mListEdges.push_back(newEdge);
     emit edgeAdded(parentNode->getIndex(), childNode->getIndex());
 }
 

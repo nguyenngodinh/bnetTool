@@ -30,18 +30,18 @@ public:
     bool removeRows(int row, int count, const QModelIndex &parent);
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
-    void initValues(int nrows, int ncolumns, int nparents);
+    void initValues(int mNRows, int mNColumns, int mNodeparents);
     void setValue(int row, int column, double value);
     double getValue(int row, int column);
     void setHeader(int column, QString value);
     void clear();
 
 private:
-    int nrows, ncolumns;
-    int nparents;           /// number of node's parents
-    double **values;        /// rows = number of assignment of parents
+    int mNRows, mNColumns;
+    int mNodeparents;           /// number of node's parents
+    double **mValues;        /// rows = number of assignment of parents
                             /// cols = nparents + nvalues
-    QStringList headers;
+    QStringList mHeaders;
 };
 
 #endif // CPTMODEL_H

@@ -17,9 +17,9 @@
 #include "qbayesnode.h"
 
 QBayesEdge::QBayesEdge(QBayesNode* parentNode, QBayesNode* childNode, QPointF p1, QPointF p2)
-    : parentNode(parentNode), childNode(childNode), parentPoint(p1), childPoint(p2)
+    : mParentNode(parentNode), mChildNode(childNode), mParentPoint(p1), mChildPoint(p2)
 {
-    isSelected = false;
+    mIsSelected = false;
     setLine();
 
     this->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
@@ -38,32 +38,32 @@ QBayesEdge::~QBayesEdge()
  */
 void QBayesEdge::setLine()
 {
-    this->parentPoint = parentPoint;
-    this->childPoint = childPoint;
+    this->mParentPoint = mParentPoint;
+    this->mChildPoint = mChildPoint;
     double x1, y1, x2, y2;
     double arrowX1, arrowY1, arrowX2, arrowY2;
 
-    if (parentPoint.x() == childPoint.x()) {
-        x1 = x2 = parentPoint.x();
-        if (parentPoint.y() < childPoint.y()) {
-            y1 = parentPoint.y() + QBayesNode::RADIUS;
-            y2 = childPoint.y() - QBayesNode::RADIUS;
+    if (mParentPoint.x() == mChildPoint.x()) {
+        x1 = x2 = mParentPoint.x();
+        if (mParentPoint.y() < mChildPoint.y()) {
+            y1 = mParentPoint.y() + QBayesNode::RADIUS;
+            y2 = mChildPoint.y() - QBayesNode::RADIUS;
         } else {
-            y1 = parentPoint.y() - QBayesNode::RADIUS;
-            y2 = childPoint.y() + QBayesNode::RADIUS;
+            y1 = mParentPoint.y() - QBayesNode::RADIUS;
+            y2 = mChildPoint.y() + QBayesNode::RADIUS;
         }
     } else {
         double k, m;
-        k = ( childPoint.y() - parentPoint.y() ) / ( childPoint.x() - parentPoint.x() );
-        m = parentPoint.y() - k*parentPoint.x();
+        k = ( mChildPoint.y() - mParentPoint.y() ) / ( mChildPoint.x() - mParentPoint.x() );
+        m = mParentPoint.y() - k*mParentPoint.x();
 
         double adder = QBayesNode::RADIUS / sqrt(1+k*k);
-        if (childPoint.x() < parentPoint.x()) {
+        if (mChildPoint.x() < mParentPoint.x()) {
             adder *= -1;
         }
 
-        x1 = parentPoint.x() + adder;
-        x2 = childPoint.x() - adder;
+        x1 = mParentPoint.x() + adder;
+        x2 = mChildPoint.x() - adder;
         y1 = k*x1 + m;
         y2 = k*x2 + m;
 
@@ -78,15 +78,15 @@ void QBayesEdge::setLine()
         arrowY1 = k1*arrowX1 + m1;
         arrowY2 = k1*arrowX2 + m1;
     }
-    start = QPointF(x1, y1);
-    end = QPointF(x2, y2);
-    arrow1 = QPointF(arrowX1, arrowY1);
-    arrow2 = QPointF(arrowX2, arrowY2);
+    mStartPoint = QPointF(x1, y1);
+    mEndPoint = QPointF(x2, y2);
+    mArrow1 = QPointF(arrowX1, arrowY1);
+    mArrow2 = QPointF(arrowX2, arrowY2);
 
     prepareGeometryChange();
 
-    qDebug() << parentPoint.x() << ";" << parentPoint.y() << endl;
-    qDebug() << childPoint.x() << ";" << childPoint.y() << endl;
+    qDebug() << mParentPoint.x() << ";" << mParentPoint.y() << endl;
+    qDebug() << mChildPoint.x() << ";" << mChildPoint.y() << endl;
     qDebug() << x1 << ";" << y1 << endl;
     qDebug() << x2 << ";" << y2 << endl;
     qDebug() << endl;
@@ -95,21 +95,21 @@ void QBayesEdge::setLine()
 
 QBayesNode *QBayesEdge::getParentNode() const
 {
-    return parentNode;
+    return mParentNode;
 }
 
 QBayesNode *QBayesEdge::getChildNode() const
 {
-    return childNode;
+    return mChildNode;
 }
 
 QString QBayesEdge::toString() const
 {
     QString rs = "";
 
-    rs += QString::number(parentNode->getIndex());
+    rs += QString::number(mParentNode->getIndex());
     rs += "\t";
-    rs += QString::number(childNode->getIndex());
+    rs += QString::number(mChildNode->getIndex());
     rs += "\t";
 //    rs += QString::number(parentPoint.x());
 //    rs += "\t";
@@ -125,13 +125,13 @@ QString QBayesEdge::toString() const
 
 void QBayesEdge::onParentNodePositionChanged(QPointF value)
 {
-    parentPoint = value;
+    mParentPoint = value;
     setLine();
 }
 
 void QBayesEdge::onChildNodePositionChanged(QPointF value)
 {
-    childPoint = value;
+    mChildPoint = value;
     setLine();
 }
 
@@ -145,14 +145,14 @@ void QBayesEdge::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    if (isSelected)
+    if (mIsSelected)
         painter->setPen(QPen(Qt::red));
     else
         painter->setPen(QPen(Qt::blue));
 
-    painter->drawLine(start, end);
+    painter->drawLine(mStartPoint, mEndPoint);
     painter->setBrush(QBrush(painter->pen().color()));
-    painter->drawPolygon(QPolygonF(QVector<QPointF>() << end << arrow1 << arrow2));
+    painter->drawPolygon(QPolygonF(QVector<QPointF>() << mEndPoint << mArrow1 << mArrow2));
     painter->setBrush(Qt::NoBrush);
 //    painter->drawRect(boundingRect());
 }
@@ -161,7 +161,7 @@ QVariant QBayesEdge::itemChange(QGraphicsItem::GraphicsItemChange change, const 
 {
     switch (change) {
     case QGraphicsItem::ItemSelectedChange:
-        isSelected = value.toBool();
+        mIsSelected = value.toBool();
         break;
     default:
         break;
@@ -181,15 +181,15 @@ QPainterPath QBayesEdge::shape()
 {
     static const qreal kClickTolerance = 2;
 
-    QPointF vec = end-start;
+    QPointF vec = mEndPoint-mStartPoint;
     double length = sqrt( vec.x()*vec.x() + vec.y()*vec.y() );
     vec = vec * (kClickTolerance/length);
     QPointF orthogonal(vec.y(), -vec.x());
 
-    QPainterPath result(start-vec+orthogonal);
-    result.lineTo(start-vec-orthogonal);
-    result.lineTo(end+vec-orthogonal);
-    result.lineTo(end+vec+orthogonal);
+    QPainterPath result(mStartPoint-vec+orthogonal);
+    result.lineTo(mStartPoint-vec-orthogonal);
+    result.lineTo(mEndPoint+vec-orthogonal);
+    result.lineTo(mEndPoint+vec+orthogonal);
     result.closeSubpath();
 
     return result;
@@ -199,22 +199,22 @@ QRectF QBayesEdge::boundingRect() const
 {
     static const qreal WIDTH = 10;
 
-    if (start.x() == end.x()) {
-        if (start.y() < end.y()) {
-            return QRectF(start.x()-WIDTH, start.y(), 2*WIDTH, end.y()-start.y());
+    if (mStartPoint.x() == mEndPoint.x()) {
+        if (mStartPoint.y() < mEndPoint.y()) {
+            return QRectF(mStartPoint.x()-WIDTH, mStartPoint.y(), 2*WIDTH, mEndPoint.y()-mStartPoint.y());
         } else {
-            return QRectF(end.x()-WIDTH, end.y(), 2*WIDTH, -end.y()+start.y());
+            return QRectF(mEndPoint.x()-WIDTH, mEndPoint.y(), 2*WIDTH, -mEndPoint.y()+mStartPoint.y());
         }
-    } else if (start.y() == end.y()) {
-        if (start.x() < end.x()) {
-            return QRectF(start.x(), start.y()-WIDTH, end.x()-start.x(), 2*WIDTH);
+    } else if (mStartPoint.y() == mEndPoint.y()) {
+        if (mStartPoint.x() < mEndPoint.x()) {
+            return QRectF(mStartPoint.x(), mStartPoint.y()-WIDTH, mEndPoint.x()-mStartPoint.x(), 2*WIDTH);
         } else {
-            return QRectF(end.x(), end.y()-WIDTH, -end.x()+start.x(), 2*WIDTH);
+            return QRectF(mEndPoint.x(), mEndPoint.y()-WIDTH, -mEndPoint.x()+mStartPoint.x(), 2*WIDTH);
         }
     }
 
 //    QPoint dp(WIDTH, WIDTH);
-    return QRectF(start, end).normalized().adjusted(-WIDTH,-WIDTH,WIDTH,WIDTH);
+    return QRectF(mStartPoint, mEndPoint).normalized().adjusted(-WIDTH,-WIDTH,WIDTH,WIDTH);
 }
 
 void QBayesEdge::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -222,12 +222,12 @@ void QBayesEdge::mousePressEvent(QGraphicsSceneMouseEvent *event)
     auto mousePoint = event->scenePos();
     double distance;
 
-    if (parentPoint.x() == childPoint.x()) {
-        distance = abs(mousePoint.x() - parentPoint.x());
+    if (mParentPoint.x() == mChildPoint.x()) {
+        distance = abs(mousePoint.x() - mParentPoint.x());
     } else {
         double k, m;
-        k = ( childPoint.y() - parentPoint.y() ) / ( childPoint.x() - parentPoint.x() );
-        m = parentPoint.y() - k*parentPoint.x();
+        k = ( mChildPoint.y() - mParentPoint.y() ) / ( mChildPoint.x() - mParentPoint.x() );
+        m = mParentPoint.y() - k*mParentPoint.x();
         distance = abs(k*mousePoint.x() - mousePoint.y() + m) / sqrt(1+k*k);
     }
 

@@ -436,7 +436,7 @@ void BayesNet::updateMul(vector<uint> eIndice, vector<int> eVals)
                                            mBeliefs, mEvidences);
         for(uint j=0; j<loopCut.size(); j++)
         {
-//            cout << "\tloopCut:" << loopCut.at(j) << endl;
+            cout << "\tloopCut:" << loopCut.at(j) << endl;
             vector<double> bel = bayesNet->getBeliefs().at(loopCut.at(j));
             jointProb *= bel.at(jointIns.at(j));
 

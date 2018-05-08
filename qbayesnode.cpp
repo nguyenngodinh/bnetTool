@@ -18,15 +18,15 @@ const qreal QBayesNode::RADIUS = 25;
 QBayesNode::QBayesNode(uint index, QString label)
     : mIndex(index), mLabel(label), mEvidenceValue(0)
 {
-    rect = QRectF(-RADIUS, -RADIUS, RADIUS*2, RADIUS*2);
-    normalColor = Qt::gray;
-    normalTextColor = Qt::white;
-    evidenceColor = Qt::green;
-    evidenceTextColor = Qt::red;
+    mRect = QRectF(-RADIUS, -RADIUS, RADIUS*2, RADIUS*2);
+    mNormalColor = Qt::gray;
+    mNormalTextColor = Qt::white;
+    mEvidenceColor = Qt::green;
+    mEvidenceTextColor = Qt::red;
     mIsSelected = false;
     mIsEvidence = false;
-    font = QFont();
-    fontMetrics = new QFontMetricsF(font);
+    mFont = QFont();
+    mFontMetrics = new QFontMetricsF(mFont);
 
     setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable
              | QGraphicsItem::ItemSendsGeometryChanges | QGraphicsItem::ItemIsFocusable);
@@ -84,7 +84,7 @@ void QBayesNode::setIsEvidence(bool value)
 
 QRectF QBayesNode::boundingRect() const
 {
-    return rect.united(labelRect).adjusted(-RADIUS/5,-RADIUS/5,RADIUS/5,RADIUS/5);
+    return mRect.united(mLabelRect).adjusted(-RADIUS/5,-RADIUS/5,RADIUS/5,RADIUS/5);
 }
 
 void QBayesNode::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -93,29 +93,29 @@ void QBayesNode::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     Q_UNUSED(widget);
 
     if (mIsEvidence) {
-        painter->setBrush(QBrush(evidenceColor));
-        painter->setPen(evidenceTextColor);
+        painter->setBrush(QBrush(mEvidenceColor));
+        painter->setPen(mEvidenceTextColor);
     } else {
-        painter->setBrush(QBrush(normalColor));
-        painter->setPen(normalTextColor);
+        painter->setBrush(QBrush(mNormalColor));
+        painter->setPen(mNormalTextColor);
     }
-    painter->drawEllipse(rect);
+    painter->drawEllipse(mRect);
     auto indexStr = QString::number(mIndex);
-    auto textRect = fontMetrics->boundingRect(indexStr);
+    auto textRect = mFontMetrics->boundingRect(indexStr);
     painter->drawText(QPointF(-textRect.width()/2, textRect.height()/4), indexStr);
 
     painter->setPen(Qt::black);
     /// draw label
     if (!mLabel.isEmpty()) {
-        labelRect = fontMetrics->boundingRect(mLabel);
-        painter->drawText(QPointF(-labelRect.width()/2, -labelRect.height()/2-RADIUS), mLabel);
-        labelRect.moveTo(-labelRect.width()/2, -labelRect.height()-RADIUS);
+        mLabelRect = mFontMetrics->boundingRect(mLabel);
+        painter->drawText(QPointF(-mLabelRect.width()/2, -mLabelRect.height()/2-RADIUS), mLabel);
+        mLabelRect.moveTo(-mLabelRect.width()/2, -mLabelRect.height()-RADIUS);
     } else {
-        labelRect = QRectF(0,0,0,0);
+        mLabelRect = QRectF(0,0,0,0);
     }
     if (mIsSelected) {
         painter->setBrush(Qt::NoBrush);
-        painter->drawEllipse(rect.adjusted(-5,-5,5,5));
+        painter->drawEllipse(mRect.adjusted(-5,-5,5,5));
     }
 
 //    painter->drawRect(boundingRect());

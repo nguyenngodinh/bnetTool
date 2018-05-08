@@ -58,11 +58,11 @@ private:
     bool mIsSelected;
 
     /// auxiliary member
-    QFont font;
-    QFontMetricsF *fontMetrics;
-    QColor normalColor, evidenceColor;
-    QColor normalTextColor, evidenceTextColor;
-    QRectF rect, labelRect;
+    QFont mFont;
+    QFontMetricsF *mFontMetrics;
+    QColor mNormalColor, mEvidenceColor;
+    QColor mNormalTextColor, mEvidenceTextColor;
+    QRectF mRect, mLabelRect;
 };
 
 #endif // MYBAYESNODE_H
